@@ -1,0 +1,38 @@
+{
+  "Actions": [
+    {
+      "Icon": "Images/windowIcon",
+      "Name": "Focus Window",
+      "States": [
+        {
+          "Image": "Images/window",
+          "TitleAlignment": "bottom",
+          "FontSize": "10"
+        }
+      ],
+      "SupportedInMultiActions": true,
+      "Tooltip": "Focus window",
+      "UUID": "com.synkrono.focuswindow",
+      "PropertyInspectorPath": "PropertyInspector/FocusWindow/FocusWindow.html"
+    }
+  ],
+  "Author": "Synkrono",
+  "Description": "Focus and restore any main window or child window",
+  "Name": "Focus Window",
+  "Icon": "Images/pluginIcon",
+  "URL": "https://synkrono.com/",
+  "Version": "1.0",
+  "CodePath": "com.synkrono.focuswindow",
+  "Category": "Synkrono AS",
+  "CategoryIcon": "Images/categoryIcon",
+  "OS": [
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    }
+  ],
+  "SDKVersion": 2,
+  "Software": {
+    "MinimumVersion": "4.8"
+  }
+}

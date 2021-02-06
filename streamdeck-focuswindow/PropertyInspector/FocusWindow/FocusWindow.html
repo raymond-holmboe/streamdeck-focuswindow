@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,minimal-ui,viewport-fit=cover">
+    <meta name=apple-mobile-web-app-capable content=yes>
+    <meta name=apple-mobile-web-app-status-bar-style content=black>
+    <title>com.synkrono.focuswindow</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdpi.css">
+    <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdtools.common.js"></script>
+    <script src="../FocusWindow.js"></script>
+</head>
+
+<body>
+    <div class="sdpi-item" id="dvApplicationName">
+        <div class="sdpi-item-label">Process Name</div>
+        <input class="sdpi-item-value sdProperty" placeholder="Process name without .exe" value="" id="applicationName" oninput="setSettings()">
+    </div>
+    <div class="sdpi-item" id="dvTitleFilter">
+        <div class="sdpi-item-label">Title Filter</div>
+        <input class="sdpi-item-value sdProperty" placeholder="" value="" id="titleFilter" oninput="setSettings()">
+    </div>
+    <div type="checkbox" class="sdpi-item">
+        <div class="sdpi-item-label">Restore Window</div>
+        <div class="sdpi-item-value">
+            <input id="restoreWindow" type="checkbox" value="" class="sdProperty sdCheckbox" oninput="setSettings()">
+            <label for="restoreWindow" class="sdpi-item-label"><span></span>Restore from a minimized position</label>
+        </div>
+    </div>
+</body>
+</html>
