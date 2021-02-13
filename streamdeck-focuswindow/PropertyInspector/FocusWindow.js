@@ -19,3 +19,16 @@
         //}
     });
 });
+
+
+function getChildWindows() {
+    var payload = {};
+    payload.property_inspector = 'getChildWindows';
+    sendPayloadToPlugin(payload);
+}
+
+function getProcesses() {
+    var payload = {};
+    payload.property_inspector = 'getProcesses';
+    sendPayloadToPlugin(payload);
+}

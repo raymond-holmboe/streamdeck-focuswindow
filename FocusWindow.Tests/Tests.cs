@@ -1,4 +1,5 @@
-﻿using Synkrono.FocusWindow.Util;
+﻿using Shouldly;
+using Synkrono.FocusWindow.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,6 +43,14 @@ namespace FocusWindow.Tests
         {
             var focuser = new WindowFocuser();
             focuser.SetFocus(new IntPtr(0x00021A28), IntPtr.Zero, false); // find specific window with given window handle
+        }
+
+        [Fact]
+        public void GetChildWindows()
+        {
+            var windowFinder = new WindowFinder();
+            var childWindows = windowFinder.GetChildWindows("chrome");
+            childWindows.Count().ShouldBeGreaterThan(0);
         }
     }
 }

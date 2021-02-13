@@ -17,11 +17,11 @@
     }
   ],
   "Author": "Synkrono",
-  "Description": "Focus and restore any main window or child window",
+  "Description": "Focus and restore any main window or a child window ",
   "Name": "Focus Window",
   "Icon": "Images/pluginIcon",
   "URL": "https://synkrono.com/",
-  "Version": "1.0",
+  "Version": "2.0",
   "CodePath": "com.synkrono.focuswindow",
   "Category": "Synkrono AS",
   "CategoryIcon": "Images/categoryIcon",

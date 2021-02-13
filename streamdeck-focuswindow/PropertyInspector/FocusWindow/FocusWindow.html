@@ -8,24 +8,58 @@
     <meta name=apple-mobile-web-app-status-bar-style content=black>
     <title>com.synkrono.focuswindow</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdpi.css">
+    <link rel="stylesheet" href="../style.css">
     <script src="https://cdn.jsdelivr.net/gh/barraider/streamdeck-easypi@latest/src/sdtools.common.js"></script>
     <script src="../FocusWindow.js"></script>
 </head>
 
 <body>
-    <div class="sdpi-item" id="dvApplicationName">
+    <!--<div id="dvAppNameSpecific">
+        <div class="sdpi-item" id="dvApplicationName">
+            <div class="sdpi-item-label">Process Name</div>
+            <input class="sdpi-item-value sdProperty" placeholder="" value="" id="applicationName" oninput="setSettings()">
+        </div>
+    </div>-->
+
+    <div id="dvProcessSpecific">
+        <!--<div class="sdpi-item" id="dvProcesses">
         <div class="sdpi-item-label">Process Name</div>
-        <input class="sdpi-item-value sdProperty" placeholder="Process name without .exe" value="" id="applicationName" oninput="setSettings()">
+        <select class="sdpi-item-value select sdProperty sdList" id="processes" oninput="setSettings()" sdListTextProperty="name" sdListValueProperty="name" sdValueField="process"></select>
+    </div>-->
+
+        <div class="sdpi-item select-editable" id="dvProcesses">
+            <div class="sdpi-item-label">Process Name</div>
+            <select class="sdpi-item-value select sdProperty sdList" id="processes" sdListTextProperty="name" sdListValueProperty="name" onchange="this.nextElementSibling.value=this.value; setSettings()"></select>
+            <input class="sdpi-item-value sdProperty" placeholder="" value="" id="process" oninput="setSettings()">
+        </div>
+        <div class="sdpi-item" id="dvGetProcesses">
+            <div class="sdpi-item-label empty"></div>
+            <button class="sdpi-item-value" onclick="getProcesses()">Get Processes</button>
+        </div>
     </div>
-    <div class="sdpi-item" id="dvTitleFilter">
-        <div class="sdpi-item-label">Title Filter</div>
-        <input class="sdpi-item-value sdProperty" placeholder="" value="" id="titleFilter" oninput="setSettings()">
+
+    <div id="dvChildWindowSpecific">
+
+        <div class="sdpi-item select-editable" id="dvChildWindows">
+            <div class="sdpi-item-label">Child Window</div>
+            <select class="sdpi-item-value select sdProperty sdList" id="childWindows" sdListTextProperty="title" sdListValueProperty="title" onchange="this.nextElementSibling.value=this.value; setSettings()"></select>
+            <input class="sdpi-item-value sdProperty" placeholder="" value="" id="childWindow" oninput="setSettings()">
+        </div>
+
+        <!--<div class="sdpi-item" id="dvChildWindows">
+            <div class="sdpi-item-label">Child Window</div>
+            <select class="sdpi-item-value select sdProperty sdList" id="childwindows" oninput="setSettings()" sdListTextProperty="title" sdListValueProperty="title" sdValueField="childWindow"></select>
+        </div>-->
+        <div class="sdpi-item" id="dvRefreshChildWindows">
+            <div class="sdpi-item-label empty"></div>
+            <button class="sdpi-item-value" onclick="getChildWindows()">Get Child Windows</button>
+        </div>
     </div>
     <div type="checkbox" class="sdpi-item">
-        <div class="sdpi-item-label">Restore Window</div>
+        <div class="sdpi-item-label empty"></div>
         <div class="sdpi-item-value">
             <input id="restoreWindow" type="checkbox" value="" class="sdProperty sdCheckbox" oninput="setSettings()">
-            <label for="restoreWindow" class="sdpi-item-label"><span></span>Restore from a minimized position</label>
+            <label for="restoreWindow" class="sdpi-item-label"><span></span>Restore minimized</label>
         </div>
     </div>
 </body>

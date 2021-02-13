@@ -44,19 +44,13 @@ namespace Synkrono.FocusWindow.Actions
 
         public async override void OnTick()
         {
-            if (!string.IsNullOrEmpty(settings.ApplicationName))
-            {
-                await Connection.SetTitleAsync(settings.ApplicationName);
-            }
-            else
-            {
-                await Connection.SetTitleAsync(settings.TitleFilter);
-            }
+            await Connection.SetTitleAsync(settings.Process);
         }
 
         public override void ReceivedSettings(ReceivedSettingsPayload payload)
         {
-            //Logger.Instance.LogMessage(TracingLevel.INFO, $"Received settings: {payload.Settings}");
+            Logger.Instance.LogMessage(TracingLevel.INFO, $"Received settings: {payload.Settings}");
+            string oldprocess = settings.Process;
             Tools.AutoPopulateSettings(settings, payload.Settings);
             SaveSettings();
         }
@@ -74,32 +68,60 @@ namespace Synkrono.FocusWindow.Actions
         private async Task FocusApplication()
         {
             var windowfinder = new WindowFinder();
-            //Logger.Instance.LogMessage(TracingLevel.INFO, $"Focus application with settings titlefilter: {settings.TitleFilter}, process name: {settings.ApplicationName}, ");
 
-            (IntPtr main, IntPtr child) = windowfinder.FindWindowWithText(settings.TitleFilter, settings.ApplicationName);
-            if (main == IntPtr.Zero)
+            (IntPtr main, IntPtr child) = windowfinder.FindWindowWithText(settings.ChildWindow, settings.Process);
+            if (!string.IsNullOrWhiteSpace(settings.ChildWindow) && child == IntPtr.Zero)
             {
-                if (string.IsNullOrWhiteSpace(settings.TitleFilter))
-                    Logger.Instance.LogMessage(TracingLevel.WARN, $"Could not find window with title like {settings.TitleFilter}");
-                else
-                    Logger.Instance.LogMessage(TracingLevel.WARN, $"Could not find window for process {settings.ApplicationName}");
-
+                Logger.Instance.LogMessage(TracingLevel.WARN, $"Could not find window with title {settings.ChildWindow}");
                 await Connection.ShowAlert();
                 return;
             }
-
-            //Logger.Instance.LogMessage(TracingLevel.INFO, $"Found main window {main}");
-            //if (child != IntPtr.Zero)
-            //    Logger.Instance.LogMessage(TracingLevel.INFO, $"Found child window {child}");
-
             var windowfocuser = new WindowFocuser();
             windowfocuser.SetFocus(main, child, settings.RestoreWindow);
             return;
         }
 
+        private void GetChildWindows()
+        {
+            if (string.IsNullOrWhiteSpace(settings.Process))
+                return;
+            var windowfinder = new WindowFinder();
+            var childWindows = windowfinder.GetChildWindows(settings.Process);
+            childWindows = childWindows.OrderBy(w => w.Title).ToList();
+            childWindows.Insert(0, new ChildWindow { Title = "", WindowsHandle = IntPtr.Zero });
+            settings.ChildWindows = childWindows;
+            //Logger.Instance.LogMessage(TracingLevel.DEBUG, "Found childwindows: " + JsonConvert.SerializeObject(settings.ChildWindows, Formatting.Indented));
+            if (settings.ChildWindows.Count > 1 && string.IsNullOrEmpty(settings.ChildWindow))
+                settings.ChildWindow = settings.ChildWindows.First().Title;
+            Logger.Instance.LogMessage(TracingLevel.INFO, $"Found {settings.ChildWindows.Count} windows");
+        }
+
+        private void GetProcesses()
+        {
+            var processLoader = new ProcessFinder();
+            var processnames = processLoader.GetProcessNamesWithMainWindow();
+            settings.Processes = processnames.Select(p => new ProcessListItem { Name = p }).OrderBy(p => p.Name).ToList();
+            Logger.Instance.LogMessage(TracingLevel.INFO, $"Found {settings.Processes.Count} processes");
+        }
+
         private async void Connection_OnSendToPlugin(object sender, BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.SendToPlugin> e)
         {
-            // may do logging here
+            var payload = e.Event.Payload;
+            string prop = payload["property_inspector"]?.ToString().ToLowerInvariant();
+            if (string.IsNullOrWhiteSpace(prop))
+                return;
+            Logger.Instance.LogMessage(TracingLevel.INFO, $"{prop} called");
+            switch (prop)
+            {
+                case "getchildwindows":
+                    GetChildWindows();
+                    await SaveSettings();
+                    break;
+                case "getprocesses":
+                    GetProcesses();
+                    await SaveSettings();
+                    break;
+            }
         }
 
         #endregion

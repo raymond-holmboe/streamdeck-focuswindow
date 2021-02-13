@@ -81,37 +81,53 @@ namespace Synkrono.FocusWindow.Util
         /// <param name="titleText"> The text that the window title must contain. </param>
         private IntPtr FindWindowFromProcess(string processname)
         {
-            var process = Process.GetProcessesByName(processname).FirstOrDefault();
+            var processFinder = new ProcessFinder();
+            var validprocesses = processFinder.GetProcessesWithMainWindow(processname);
+            var process = validprocesses.FirstOrDefault(f => f.ProcessName.IndexOf(processname, StringComparison.OrdinalIgnoreCase) >= 0);
             if (process == null)
                 throw new Exception("Can not find process with name " + processname);
             return process.MainWindowHandle;
         }
 
-        /// <summary> Find first window that contains the given title text. If processname is given, then the first childwindow with the given text is returned
+        /// <summary> Find first window that contains the given title text. If titleText is missing, then the main handle is returned
         /// <param name="titleText"> The text that the window title must contain. </param>
         /// <param name="processname"/>Name of the process, without the .exe suffix </param>
         public (IntPtr mainWindow, IntPtr childWindow) FindWindowWithText(string titleText, string processname)
         {
-            if (string.IsNullOrWhiteSpace(titleText) && !string.IsNullOrWhiteSpace(processname))
-            {
-                IntPtr main = FindWindowFromProcess(processname);
+            IntPtr main = FindWindowFromProcess(processname);
+            if (string.IsNullOrWhiteSpace(titleText))
                 return (main, IntPtr.Zero);
-            }
+
+            IntPtr mainWindow = FindWindowFromProcess(processname);
             Func<IntPtr, bool> filter = wnd =>
             {
                 string windowtext = GetWindowText(wnd);
                 bool windowfound = windowtext.IndexOf(titleText, StringComparison.OrdinalIgnoreCase) >= 0;
                 return windowfound;
             };
-            if (string.IsNullOrWhiteSpace(processname))
-            {
-                IntPtr main = FindWindow(filter);
-                return (main, IntPtr.Zero);
-            }
-            IntPtr mainWindow = FindWindowFromProcess(processname);
             IntPtr childWindow = FindChildWindow(mainWindow, filter);
             return (mainWindow, childWindow);
         }
 
+        public List<ChildWindow> GetChildWindows(string processname)
+        {
+            IntPtr mainWindow = FindWindowFromProcess(processname);
+
+            var childWindows = new List<ChildWindow>();
+            EnumWindowsProc del = (wnd, par) =>
+            {
+                string title = GetWindowText(wnd);
+                if (string.IsNullOrWhiteSpace(title))
+                    return true; // true to iterate to next window
+                if (!childWindows.Any(c => c.Title.IndexOf(title, StringComparison.OrdinalIgnoreCase) >= 0))
+                {
+                    var childWindow = new ChildWindow { Title = title, WindowsHandle = wnd };
+                    childWindows.Add(childWindow);
+                }
+                return true; // true to iterate to next window
+            };
+            EnumChildWindows(mainWindow, del, IntPtr.Zero);
+            return childWindows;
+        }
     }
 }

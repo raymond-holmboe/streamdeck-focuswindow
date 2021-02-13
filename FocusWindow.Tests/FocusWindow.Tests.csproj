@@ -97,7 +97,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\streamdeck-focuswindow\FocusWindow.csproj">
-      <Project>{EA9D23A2-151D-42D3-B19D-54878D599CE2}</Project>
+      <Project>{ea9d23a2-151d-42d3-b19d-54878d599ce2}</Project>
       <Name>FocusWindow</Name>
     </ProjectReference>
   </ItemGroup>

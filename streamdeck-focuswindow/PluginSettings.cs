@@ -13,19 +13,27 @@ namespace Synkrono.FocusWindow
         {
             PluginSettings instance = new PluginSettings
             {
-                ApplicationName = String.Empty,
-                TitleFilter = String.Empty,
+                Process = string.Empty,
+                Processes = new List<ProcessListItem>(),
+                ChildWindows = new List<ChildWindow>(),
+                ChildWindow = string.Empty,
                 RestoreWindow = false
             };
 
             return instance;
         }
 
-        [JsonProperty(PropertyName = "applicationName")]
-        public string ApplicationName { get; set; }
+        [JsonProperty(PropertyName = "processes")]
+        public List<ProcessListItem> Processes { get; set; }
 
-        [JsonProperty(PropertyName = "titleFilter")]
-        public string TitleFilter { get; set; }
+        [JsonProperty(PropertyName = "process")]
+        public string Process { get; set; }
+
+        [JsonProperty(PropertyName = "childWindows")]
+        public List<ChildWindow> ChildWindows { get; set; }
+
+        [JsonProperty(PropertyName = "childWindow")]
+        public string ChildWindow { get; set; }
 
         [JsonProperty(PropertyName = "restoreWindow")]
         public bool RestoreWindow { get; set; }
